@@ -36,14 +36,25 @@ class _CarrinhoState extends State<Carrinho> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          produtosCarrinho.isNotEmpty
-              ? produtosCarrinho //
-                    .map((e) => e.preco)
-                    .reduce((value, element) => value + element)
-                    .toStringAsFixed(2)
-              : 'Sem produtos no carrinho',
-        ),
+        title: Row(
+          spacing: 8,
+          children: [
+            Text(
+              produtosCarrinho.isNotEmpty
+                  ? produtosCarrinho //
+                        .map((e) => e.preco)
+                        .reduce((value, element) => value + element)
+                        .toStringAsFixed(2)
+                  : 'Sem produtos no carrinho',
+            ),
+            Container(
+              padding: EdgeInsets.all(8.0),
+              decoration: BoxDecoration(
+                border: Border.all(),
+              ),
+              child: Text('Largura da tela: ${MediaQuery.of(context).size.width}'),
+            ),
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: GridView.count(
         crossAxisCount: 2,
