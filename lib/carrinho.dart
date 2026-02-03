@@ -11,6 +11,7 @@ class Carrinho extends StatefulWidget {
 class _CarrinhoState extends State<Carrinho> {
   List<Produto> produtos = [];
   List<Produto> produtosCarrinho = [];
+  double childAspectRatio = 1.0;
 
   @override
   void initState() {
@@ -54,9 +55,34 @@ class _CarrinhoState extends State<Carrinho> {
               ),
               child: Text('Largura da tela: ${MediaQuery.of(context).size.width}'),
             ),
+            RadioGroup(
+              groupValue: childAspectRatio,
+              onChanged: (value) {
+                if (value != null) {
+                  setState(() {
+                    childAspectRatio = value;
+                  });
+                }
+              },
+              child: Row(
+                spacing: 8,
+                children: [
+                  Radio.adaptive(value: 1.0),
+                  Text('1 / 1'),
+
+                  Radio.adaptive(value: 4 / 3),
+                  Text('4/3'),
+                  Radio.adaptive(value: 16 / 9),
+                  Text('16/9'),
+                ],
+              ),
+            ),
+          ],
+        ),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: GridView.count(
+        childAspectRatio: childAspectRatio,
         crossAxisCount: 2,
         children: produtos.map(
           (e) {
