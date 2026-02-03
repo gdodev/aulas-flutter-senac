@@ -28,9 +28,10 @@ class _CarrinhoState extends State<Carrinho> {
 
   @override
   Widget build(BuildContext context) {
-    const TextStyle estiloTextos = TextStyle(
+    final TextStyle estiloTextos = TextStyle(
       fontSize: 18,
-      color: Colors.blue,
+      color: Colors.white,
+      background: Paint()..color = Colors.blue,
     );
 
     return Scaffold(
