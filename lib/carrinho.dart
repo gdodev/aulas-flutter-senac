@@ -91,35 +91,39 @@ class _CarrinhoState extends State<Carrinho> {
                 produtosCarrinho //
                     .where((element) => element.id == e.id)
                     .isNotEmpty;
-            return GestureDetector(
-              onTap: () {
-                setState(() {
-                  produtoPresenteNoCarrinho ? produtosCarrinho.remove(e) : produtosCarrinho.add(e);
-                });
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.blue),
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  spacing: 8.0,
-                  children: [
-                    Text(
-                      e.id.toString(),
-                      style: estiloTextos,
-                    ),
-                    Text(
-                      e.descricao,
-                      style: estiloTextos,
-                    ),
-                    Text(
-                      e.preco.toStringAsFixed(2),
-                      style: estiloTextos,
-                    ),
-                    produtoPresenteNoCarrinho ? Icon(Icons.check, color: Colors.green) : Icon(Icons.cancel, color: Colors.red),
-                  ],
+            return LayoutBuilder(
+              builder: (context, constraints) => GestureDetector(
+                onTap: () {
+                  setState(() {
+                    produtoPresenteNoCarrinho ? produtosCarrinho.remove(e) : produtosCarrinho.add(e);
+                  });
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.blue),
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    spacing: 8.0,
+                    children: [
+                      Text('Largura do componente: ${constraints.maxWidth}'),
+                      Text('Altura do componente: ${constraints.maxHeight}'),
+                      Text(
+                        e.id.toString(),
+                        style: estiloTextos,
+                      ),
+                      Text(
+                        e.descricao,
+                        style: estiloTextos,
+                      ),
+                      Text(
+                        e.preco.toStringAsFixed(2),
+                        style: estiloTextos,
+                      ),
+                      produtoPresenteNoCarrinho ? Icon(Icons.check, color: Colors.green) : Icon(Icons.cancel, color: Colors.red),
+                    ],
+                  ),
                 ),
               ),
             );
