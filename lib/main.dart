@@ -1,6 +1,8 @@
 import 'package:amostra/carrinho.dart';
+import 'package:amostra/my_change_notifier.dart';
 import 'package:amostra/my_home_page.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   // final int a = 0;
@@ -15,7 +17,16 @@ void main() {
 
   // int b = 1;
 
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => MyChangeNotifier(),
+        ),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
