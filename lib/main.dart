@@ -1,4 +1,5 @@
 import 'package:amostra/carrinho.dart';
+import 'package:amostra/carrinho2.dart';
 import 'package:amostra/my_change_notifier.dart';
 import 'package:amostra/my_home_page.dart';
 import 'package:flutter/material.dart';
@@ -41,7 +42,11 @@ class MyApp extends StatelessWidget {
         colorScheme: .fromSeed(seedColor: Colors.deepPurple),
       ),
       // home: const MyHomePage(title: 'Flutter Demo Home Page'),
-      home: Carrinho(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => Carrinho(),
+        '/carrinho2': (context) => Carrinho2(),
+      },
     );
   }
 }

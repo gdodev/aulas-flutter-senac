@@ -70,12 +70,21 @@ class _CarrinhoState extends State<Carrinho> {
         body: Column(
           children: [
             ElevatedButton(
-              onPressed: () => Navigator.of(context).push(
+              // onPressed: () => Navigator.of(context).push(
+              //   MaterialPageRoute(
+              //     builder: (context) => Carrinho2(),
+              //   ),
+              // ),
+              onPressed: () => Navigator.of(context).pushNamed('/carrinho2'),
+              child: Text('Navegar Carrinho 2 (push)'),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pushReplacement(
                 MaterialPageRoute(
                   builder: (context) => Carrinho2(),
                 ),
               ),
-              child: Text('Carrinho 2'),
+              child: Text('Navegar Carrinho 2 (push replacement)'),
             ),
             Expanded(
               child: GridView.count(

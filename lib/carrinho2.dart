@@ -20,7 +20,20 @@ class _Carrinho2State extends State<Carrinho2> {
           appBar: AppBar(
             title: Text('Carrinho 2'),
           ),
-          body: Text(myChangeNotifier.childAspectRatio.toString()),
+          body: Column(
+            children: [
+              Text(myChangeNotifier.childAspectRatio.toString()),
+              ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Row(
+                  children: [
+                    Text('Voltar'),
+                    Icon(Icons.arrow_back),
+                  ],
+                ),
+              ),
+            ],
+          ),
         );
       },
     );
