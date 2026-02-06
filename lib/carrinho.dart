@@ -1,4 +1,5 @@
 import 'package:amostra/carrinho2.dart';
+import 'package:amostra/carrinho2_arguments.dart';
 import 'package:amostra/my_change_notifier.dart';
 import 'package:amostra/produto.dart';
 import 'package:flutter/material.dart';
@@ -75,13 +76,16 @@ class _CarrinhoState extends State<Carrinho> {
               //     builder: (context) => Carrinho2(),
               //   ),
               // ),
-              onPressed: () => Navigator.of(context).pushNamed('/carrinho2'),
+              onPressed: () => Navigator.of(context).pushNamed(
+                '/carrinho2',
+              ),
               child: Text('Navegar Carrinho 2 (push)'),
             ),
             ElevatedButton(
-              onPressed: () => Navigator.of(context).pushReplacement(
-                MaterialPageRoute(
-                  builder: (context) => Carrinho2(),
+              onPressed: () => Navigator.of(context).pushReplacementNamed(
+                '/carrinho2',
+                arguments: Carrinho2Arguments(
+                  totalProdutosCarrinho: myChangeNotifier.produtosCarrinho.length,
                 ),
               ),
               child: Text('Navegar Carrinho 2 (push replacement)'),

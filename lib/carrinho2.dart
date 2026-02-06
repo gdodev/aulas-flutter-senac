@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class Carrinho2 extends StatefulWidget {
-  const Carrinho2({super.key});
+  const Carrinho2({super.key, required this.totalProdutosCarrinho});
+
+  final int totalProdutosCarrinho;
 
   @override
   State<Carrinho2> createState() => _Carrinho2State();
