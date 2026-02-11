@@ -1,7 +1,5 @@
-import 'package:amostra/carrinho2.dart';
 import 'package:amostra/carrinho2_arguments.dart';
 import 'package:amostra/my_change_notifier.dart';
-import 'package:amostra/produto.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -142,6 +140,15 @@ class _CarrinhoState extends State<Carrinho> {
               ),
             ),
           ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () async {
+            // final preferences = await SharedPreferences.getInstance();
+            // preferences.setString('teste', 'teste produto 1');
+
+            Navigator.of(context).pushNamed('/formulario-produto');
+          },
+          child: Icon(Icons.add),
         ),
       ),
     );
