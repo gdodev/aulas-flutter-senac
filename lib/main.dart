@@ -2,11 +2,20 @@ import 'package:amostra/carrinho.dart';
 import 'package:amostra/carrinho2.dart';
 import 'package:amostra/carrinho2_arguments.dart';
 import 'package:amostra/formulario_produto.dart';
+import 'package:amostra/formulario_produto_arguments.dart';
 import 'package:amostra/my_change_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Supabase.initialize(
+    url: 'https://hyfxiyamylwowpthoeyq.supabase.co',
+    anonKey: 'sb_publishable_ts7uh_e6yxJ-wYmnDjSUyw_f-bbYLL2',
+  );
+
   // final preferences = await SharedPreferences.getInstance();
   // print(preferences.getString('teste'));
 
@@ -71,9 +80,13 @@ class MyApp extends StatelessWidget {
           );
         }
         if (settings.name == '/formulario-produto') {
+          final args = settings.arguments as FormularioProdutoArguments;
+
           return MaterialPageRoute(
             builder: (context) {
-              return FormularioProduto();
+              return FormularioProduto(
+                produto: args.produto,
+              );
             },
           );
         }
