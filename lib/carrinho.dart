@@ -1,4 +1,5 @@
 import 'package:amostra/carrinho2_arguments.dart';
+import 'package:amostra/formulario_produto_arguments.dart';
 import 'package:amostra/my_change_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -11,6 +12,14 @@ class Carrinho extends StatefulWidget {
 }
 
 class _CarrinhoState extends State<Carrinho> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<MyChangeNotifier>().fetchProductsFromSupabase();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     MyChangeNotifier myChangeNotifier = context.read();
@@ -66,87 +75,131 @@ class _CarrinhoState extends State<Carrinho> {
           ),
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         ),
-        body: Column(
-          children: [
-            ElevatedButton(
-              // onPressed: () => Navigator.of(context).push(
-              //   MaterialPageRoute(
-              //     builder: (context) => Carrinho2(),
-              //   ),
-              // ),
-              onPressed: () => Navigator.of(context).pushNamed(
-                '/carrinho2',
-              ),
-              child: Text('Navegar Carrinho 2 (push)'),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.of(context).pushReplacementNamed(
-                '/carrinho2',
-                arguments: Carrinho2Arguments(
-                  totalProdutosCarrinho: myChangeNotifier.produtosCarrinho.length,
+        body: myChangeNotifier.isLoading
+            ? SizedBox.expand(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  spacing: 8,
+                  children: [
+                    Text('Carregando produtos'),
+                    const CircularProgressIndicator.adaptive(),
+                  ],
                 ),
-              ),
-              child: Text('Navegar Carrinho 2 (push replacement)'),
-            ),
-            Expanded(
-              child: GridView.count(
-                childAspectRatio: myChangeNotifier.childAspectRatio,
-                crossAxisCount: 2,
-                children: myChangeNotifier.produtos.map(
-                  (e) {
-                    // return Text(e.descricao);
-                    final bool produtoPresenteNoCarrinho = myChangeNotifier
-                        .produtosCarrinho //
-                        .where((element) => element.id == e.id)
-                        .isNotEmpty;
-                    return LayoutBuilder(
-                      builder: (context, constraints) => GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            produtoPresenteNoCarrinho ? myChangeNotifier.produtosCarrinho.remove(e) : myChangeNotifier.produtosCarrinho.add(e);
-                          });
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.blue),
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            spacing: 8.0,
-                            children: [
-                              Text('Largura do componente: ${constraints.maxWidth}'),
-                              Text('Altura do componente: ${constraints.maxHeight}'),
-                              Text(
-                                e.id.toString(),
-                                style: estiloTextos,
-                              ),
-                              Text(
-                                e.descricao,
-                                style: estiloTextos,
-                              ),
-                              Text(
-                                e.preco.toStringAsFixed(2),
-                                style: estiloTextos,
-                              ),
-                              produtoPresenteNoCarrinho ? Icon(Icons.check, color: Colors.green) : Icon(Icons.cancel, color: Colors.red),
-                            ],
-                          ),
-                        ),
+              )
+            : Column(
+                children: [
+                  ElevatedButton(
+                    // onPressed: () => Navigator.of(context).push(
+                    //   MaterialPageRoute(
+                    //     builder: (context) => Carrinho2(),
+                    //   ),
+                    // ),
+                    onPressed: () => Navigator.of(context).pushNamed(
+                      '/carrinho2',
+                    ),
+                    child: Text('Navegar Carrinho 2 (push)'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () => Navigator.of(context).pushReplacementNamed(
+                      '/carrinho2',
+                      arguments: Carrinho2Arguments(
+                        totalProdutosCarrinho: myChangeNotifier.produtosCarrinho.length,
                       ),
-                    );
-                  },
-                ).toList(),
+                    ),
+                    child: Text('Navegar Carrinho 2 (push replacement)'),
+                  ),
+                  Expanded(
+                    child: myChangeNotifier.produtos.isEmpty
+                        ? Center(
+                            child: Text('Nenhum produto cadastrado'),
+                          )
+                        : GridView.count(
+                            childAspectRatio: myChangeNotifier.childAspectRatio,
+                            crossAxisCount: 2,
+                            children: myChangeNotifier.produtos.map(
+                              (e) {
+                                // return Text(e.descricao);
+                                final bool produtoPresenteNoCarrinho = myChangeNotifier
+                                    .produtosCarrinho //
+                                    .where((element) => element.id == e.id)
+                                    .isNotEmpty;
+                                return LayoutBuilder(
+                                  builder: (context, constraints) => GestureDetector(
+                                    onTap: () {
+                                      // setState(() {
+                                      //   produtoPresenteNoCarrinho
+                                      //       ? myChangeNotifier.produtosCarrinho.remove(e)
+                                      //       : myChangeNotifier.produtosCarrinho.add(e);
+                                      // });
+                                      Navigator.of(context)
+                                          .pushNamed(
+                                            '/formulario-produto',
+                                            arguments: FormularioProdutoArguments(produto: e),
+                                          )
+                                          .then(
+                                            (value) {
+                                              myChangeNotifier.fetchProductsFromSupabase();
+                                            },
+                                          );
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.blue),
+                                        borderRadius: BorderRadius.circular(8.0),
+                                      ),
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        spacing: 8.0,
+                                        children: [
+                                          Text('Largura do componente: ${constraints.maxWidth}'),
+                                          Text('Altura do componente: ${constraints.maxHeight}'),
+                                          Text(
+                                            e.id.toString(),
+                                            style: estiloTextos,
+                                          ),
+                                          Text(
+                                            e.descricao,
+                                            style: estiloTextos,
+                                          ),
+                                          Text(
+                                            e.preco.toStringAsFixed(2),
+                                            style: estiloTextos,
+                                          ),
+                                          produtoPresenteNoCarrinho ? Icon(Icons.check, color: Colors.green) : Icon(Icons.cancel, color: Colors.red),
+                                          ElevatedButton.icon(
+                                            onPressed: () async {
+                                              await myChangeNotifier.deleteProductFromSupabase(idProduto: e.id);
+                                              myChangeNotifier.fetchProductsFromSupabase();
+                                            },
+                                            label: Text('Deletar'),
+                                            icon: Icon(Icons.delete),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ).toList(),
+                          ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
             // final preferences = await SharedPreferences.getInstance();
             // preferences.setString('teste', 'teste produto 1');
 
-            Navigator.of(context).pushNamed('/formulario-produto');
+            Navigator.of(context)
+                .pushNamed(
+                  '/formulario-produto',
+                  arguments: FormularioProdutoArguments(),
+                )
+                .then(
+                  (value) {
+                    myChangeNotifier.fetchProductsFromSupabase();
+                  },
+                );
           },
           child: Icon(Icons.add),
         ),

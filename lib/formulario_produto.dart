@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class FormularioProduto extends StatefulWidget {
-  const FormularioProduto({super.key});
+  const FormularioProduto({super.key, this.produto});
+
+  final Produto? produto;
 
   @override
   State<FormularioProduto> createState() => _FormularioProdutoState();
@@ -17,11 +19,25 @@ class _FormularioProdutoState extends State<FormularioProduto> {
 
   final formKey = GlobalKey<FormState>();
 
+  bool isEdit = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.produto != null) {
+      isEdit = true;
+      idController.text = widget.produto!.id.toString();
+      descricaoController.text = widget.produto!.descricao;
+      precoController.text = widget.produto!.preco.toString();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Formulário produto'),
+        title: isEdit ? Text('Edição de produto') : Text('Cadastro de produto'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -36,6 +52,7 @@ class _FormularioProdutoState extends State<FormularioProduto> {
                   labelText: 'ID Produto',
                   border: OutlineInputBorder(),
                 ),
+                readOnly: isEdit,
                 validator: (value) {
                   if (int.tryParse(value ?? '') == null) {
                     return 'ID do produto deve ser um inteiro';
@@ -82,16 +99,75 @@ class _FormularioProdutoState extends State<FormularioProduto> {
                   // print('descricao: ${descricaoController.text}');
                   // print('preco: ${precoController.text}');
                   if (formKey.currentState!.validate()) {
-                    context.read<MyChangeNotifier>().produtos.add(
-                      Produto(
-                        id: int.parse(idController.text),
-                        descricao: descricaoController.text,
-                        preco: double.parse(precoController.text),
-                      ),
-                    );
+                    // context.read<MyChangeNotifier>().produtos.add(
+                    //   Produto(
+                    //     id: int.parse(idController.text),
+                    //     descricao: descricaoController.text,
+                    //     preco: double.parse(precoController.text),
+                    //   ),
+                    // );
+                    isEdit
+                        ? context
+                              .read<MyChangeNotifier>()
+                              .updateProductIntoSupabase(
+                                produto: Produto(
+                                  id: int.parse(idController.text),
+                                  descricao: descricaoController.text,
+                                  preco: double.parse(precoController.text),
+                                ),
+                              )
+                              .then(
+                                (value) {
+                                  if (context.mounted) {
+                                    Navigator.of(context).pop();
+                                  }
+                                },
+                              )
+                              .catchError((err) {
+                                if (context.mounted) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog.adaptive(
+                                        title: Text('Erro ao atualizar produto'),
+                                        content: Text(err.toString()),
+                                      );
+                                    },
+                                  );
+                                }
+                              })
+                        : context
+                              .read<MyChangeNotifier>()
+                              .insertProductIntoSupabase(
+                                produto: Produto(
+                                  id: int.parse(idController.text),
+                                  descricao: descricaoController.text,
+                                  preco: double.parse(precoController.text),
+                                ),
+                              )
+                              .then(
+                                (value) {
+                                  if (context.mounted) {
+                                    Navigator.of(context).pop();
+                                  }
+                                },
+                              )
+                              .catchError((err) {
+                                if (context.mounted) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog.adaptive(
+                                        title: Text('Erro ao cadastrar produto'),
+                                        content: Text(err.toString()),
+                                      );
+                                    },
+                                  );
+                                }
+                              });
                   }
                 },
-                child: Text('Submeter'),
+                child: Text('Salvar'),
               ),
             ],
           ),
